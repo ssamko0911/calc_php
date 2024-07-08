@@ -1,0 +1,29 @@
+services:
+    php:
+        build:
+            context: .
+            dockerfile: Dockerfile
+        container_name: simple-calculator
+        restart: unless-stopped
+        volumes:
+            - ./:/srv/app
+        networks:
+            - calculator
+
+    caddy:
+        image: caddy:2.7-alpine
+        container_name: caddy
+        depends_on:
+            - php
+        restart: unless-stopped
+        ports:
+            - "8383:80"
+        volumes:
+            - ./caddy:/etc/caddy
+            - ./:/srv/app
+        networks:
+            - calculator
+
+networks:
+    calculator:
+        driver: bridge
